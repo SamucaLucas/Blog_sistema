@@ -5,11 +5,16 @@ import lombok.*;
 import java.time.LocalDateTime; 
 import java.util.HashSet; 
 import java.util.Set; 
-  
+
 @Entity 
 @Table(name = "posts") 
-@Getter @Setter 
-@NoArgsConstructor @AllArgsConstructor @Builder 
+@Getter 
+@Setter 
+@NoArgsConstructor 
+@AllArgsConstructor 
+@Builder
+
+
 public class Post { 
   
     @Id 
@@ -28,6 +33,7 @@ public class Post {
     @Column(length = 500) 
     private String resumo; 
   
+    @Builder.Default
     @Column(nullable = false) 
     private Boolean publicado = false; 
   
@@ -42,8 +48,10 @@ CascadeType.MERGE })
         joinColumns = @JoinColumn(name = "post_id"), 
         inverseJoinColumns = @JoinColumn(name = "tag_id") 
     ) 
+    @Builder.Default
     private Set<Tag> tags = new HashSet<>(); 
   
+    @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true) 
     private Set<Comentario> comentarios = new HashSet<>(); 
   
@@ -63,4 +71,5 @@ CascadeType.MERGE })
     protected void onUpdate() { 
         atualizadoEm = LocalDateTime.now(); 
     } 
+    
 } 

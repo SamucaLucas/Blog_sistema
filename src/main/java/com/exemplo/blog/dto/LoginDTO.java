@@ -1,10 +1,16 @@
 package com.exemplo.blog.dto; 
-import jakarta.validation.constraints.*; 
-  
- 
-  
-public record LoginDTO( 
-    @NotBlank @Email String email, 
-    @NotBlank String senha 
-) {} 
-  
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+
+@Data 
+public class LoginDTO { 
+    
+    @NotBlank 
+    @Email 
+    private String email; 
+    
+    @NotBlank 
+    private String senha; 
+}

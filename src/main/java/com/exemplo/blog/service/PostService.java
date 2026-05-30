@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*; 
 import org.springframework.stereotype.Service; 
 import org.springframework.transaction.annotation.Transactional; 
+import com.exemplo.blog.entity.Tag;
   
 import java.text.Normalizer; 
 import java.util.HashSet; 
@@ -117,13 +118,24 @@ gerarResumo(dto.getConteudo()))
     } 
   
     private Set<Tag> processarTags(Set<String> nomes) { 
-        if (nomes == null || nomes.isEmpty()) return new HashSet<>(); 
-        return nomes.stream() 
-            .map(n -> n.toLowerCase().trim()) 
-            .filter(n -> !n.isEmpty()) 
-            .map(n -> tagRepository.findByNome(n) 
-                .orElseGet(() -> tagRepository.save(Tag.builder().nome(n).build()))) 
-            .collect(Collectors.toSet()); 
+        if (nomes == null || nomes.isEmpty()) {
+            return new HashSet<>(); 
+        }
+        
+        Set<Tag> tagsProcessadas = new HashSet<>();
+        
+        for (String nome : nomes) {
+            String nomeFormatado = nome.toLowerCase().trim();
+            if (!nomeFormatado.isEmpty()) {
+                // Tenta buscar a tag, se não existir, cria e salva uma nova
+                Tag tag = tagRepository.findByNome(nomeFormatado)
+                    .orElseGet(() -> tagRepository.save(Tag.builder().nome(nomeFormatado).build()));
+                
+                tagsProcessadas.add(tag);
+            }
+        }
+        
+        return tagsProcessadas;
     } 
   
     private PostResponseDTO paraDTO(Post p) { 

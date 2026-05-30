@@ -15,6 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration; 
 import org.springframework.web.cors.CorsConfigurationSource; 
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource; 
+import org.springframework.http.HttpMethod;
   
 import java.util.List; 
   
@@ -47,9 +48,9 @@ public class SecurityConfig {
                 .requestMatchers("/api/usuarios/**").permitAll() 
                 .requestMatchers("/", "/static/**", "/*.html", "/css/**", "/js/**") 
                     .permitAll() 
-                .requestMatchers("POST", "/api/posts").authenticated() 
-                .requestMatchers("PUT", "/api/posts/**").authenticated() 
-                .requestMatchers("DELETE", "/api/posts/**").authenticated() 
+                .requestMatchers(HttpMethod.POST, "/api/posts").authenticated() 
+                .requestMatchers(HttpMethod.PUT, "/api/posts/**").authenticated() 
+                .requestMatchers(HttpMethod.DELETE, "/api/posts/**").authenticated()
                 .requestMatchers("/api/comentarios/**").authenticated() 
                 .anyRequest().authenticated() 
             ) 

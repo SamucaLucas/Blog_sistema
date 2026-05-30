@@ -31,6 +31,7 @@ public class Usuario {
     @Column(name = "avatar_url") 
     private String avatarUrl; 
   
+    @Builder.Default
     @Enumerated(EnumType.STRING) 
     @Column(nullable = false) 
     private Role role = Role.LEITOR; 
@@ -41,6 +42,7 @@ public class Usuario {
     @Column(name = "atualizado_em") 
     private LocalDateTime atualizadoEm; 
   
+    @Builder.Default
     @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, orphanRemoval = true) 
     @ToString.Exclude 
     private Set<Post> posts = new HashSet<>(); 
