@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Novo Post - Meu Blog</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+    <div id="navbar-container"></div>
+
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h2 class="card-title mb-4">Criar Novo Post</h2>
+
+                        <form id="formNovoPost">
+                            <div class="mb-3">
+                                <label for="postTitulo" class="form-label fw-bold">Título *</label>
+                                <input type="text" id="postTitulo" class="form-control" required maxlength="200"
+                                    placeholder="Ex: O meu primeiro post no blog">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="postResumo" class="form-label fw-bold">Resumo</label>
+                                <textarea id="postResumo" class="form-control" rows="2" maxlength="500"
+                                    placeholder="Breve descrição do artigo (opcional)"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="postConteudo" class="form-label fw-bold">Conteúdo *</label>
+                                <textarea id="postConteudo" class="form-control" rows="10" required
+                                    placeholder="Escreve aqui o conteúdo do teu post..."></textarea>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="postTags" class="form-label fw-bold">Tags</label>
+                                <input type="text" id="postTags" class="form-control"
+                                    placeholder="java, spring, programacao">
+                                <div class="form-text">Separa as tags por vírgula.</div>
+                            </div>
+
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" id="postPublicado" checked>
+                                <label class="form-check-label" for="postPublicado">
+                                    Publicar imediatamente (ficará visível para todos)
+                                </label>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-2">
+                                <a href="/" class="btn btn-outline-secondary">Cancelar</a>
+                                <button type="submit" class="btn btn-primary">Salvar Post</button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/navbar.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Verifica se o utilizador está logado antes de deixar preencher o formulário
+            const user = await usuarioLogado();
+            if (!user) {
+                alert('Precisas de iniciar sessão para criar um post.');
+                window.location.href = '/login.html';
+                return;
+            }
+
+            // Lógica ao submeter o formulário
+            document.getElementById('formNovoPost').addEventListener('submit', async (e) => {
+                e.preventDefault(); // Evita que a página recarregue
+
+                // Pega os valores dos campos
+                const titulo = document.getElementById('postTitulo').value.trim();
+                const resumo = document.getElementById('postResumo').value.trim();
+                const conteudo = document.getElementById('postConteudo').value.trim();
+                const tagsInput = document.getElementById('postTags').value;
+                const publicado = document.getElementById('postPublicado').checked;
+
+                // Processar as tags (separa por vírgula e remove espaços vazios)
+                const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()).filter(t => t !== '') : [];
+
+                try {
+                    // Monta o objeto (DTO) exatamente como o Java espera
+                    const payload = {
+                        titulo: titulo,
+                        conteudo: conteudo,
+                        resumo: resumo ? resumo : null,
+                        tags: tags,
+                        publicado: publicado
+                    };
+
+                    // Chama o back-end para salvar
+                    await apiPost('/posts', payload);
+
+                    alert('Post publicado com sucesso!');
+                    window.location.href = '/'; // Redireciona de volta para a página inicial
+
+                } catch (err) {
+                    alert('Erro ao criar post: ' + err.message);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
